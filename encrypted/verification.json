@@ -1,10 +1,10 @@
 {
-  "archive": "Spaces-0.12.5-source-and-installer.zip.enc",
+  "archive": "Spaces-0.12.6-source-and-installer.zip.enc",
   "algorithm": "AES-256-GCM",
-  "bytes": 165791956,
-  "encryptedSha256": "1d647c24448ac16141d365d5ba390cac1f58242a69a404e4c5d190455e32e071",
-  "decryptedZipSha256": "22fe451c91bf1276646c430f37c6707f0eef6259646f8055c8a4092994c4c394",
-  "version": "0.12.5",
+  "bytes": 165794813,
+  "encryptedSha256": "8b2c11d00c5ff67df9eb0180b5e670c5501b43e3c4e83b23291833bedb44447f",
+  "decryptedZipSha256": "000467a5e9cb91a7d07fe9c2aae048f34888c895efc6798c1ad9bd464d300aa3",
+  "version": "0.12.6",
   "includes": [
     "source",
     "latest Apple Silicon Mac installer",

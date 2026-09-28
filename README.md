@@ -1,10 +1,10 @@
 # space
 
-Encrypted Spaces 0.12.5 source code and Apple Silicon Mac installer.
+Encrypted Spaces 0.12.6 source code and Apple Silicon Mac installer.
 
 ## Contents
 
-- `encrypted/Spaces-0.12.5-source-and-installer.zip.enc`: AES-256-GCM encrypted package, stored with Git LFS.
+- `encrypted/Spaces-0.12.6-source-and-installer.zip.enc`: AES-256-GCM encrypted package, stored with Git LFS.
 - `encrypted/verification.json`: file size and SHA-256 checksums.
 - `tools/archive-crypto.py`: local encryption and decryption utility.
 
@@ -33,27 +33,27 @@ python3 -m venv .venv
 .venv/bin/python -m pip install cryptography
 .venv/bin/python tools/archive-crypto.py decrypt \
   --key-file /path/to/encryption-key.hex \
-  --input encrypted/Spaces-0.12.5-source-and-installer.zip.enc \
-  --output Spaces-0.12.5-source-and-installer.zip
+  --input encrypted/Spaces-0.12.6-source-and-installer.zip.enc \
+  --output Spaces-0.12.6-source-and-installer.zip
 ```
 
 The utility verifies authentication before making the decrypted ZIP available. It will not overwrite an existing output file. The package cannot be recovered without its key.
 
-Extract the ZIP, then open `spaces-app/dist/Spaces-0.12.5-arm64.dmg` to install Spaces. The app creates its basic library in `~/Documents/Spaces` on first launch. Each new space gets its own memory, notes, chats, artifacts, and work folders. Existing libraries are retained. Install and sign in to Kiro CLI separately.
+Extract the ZIP, then open `spaces-app/dist/Spaces-0.12.6-arm64.dmg` to install Spaces. The app creates its basic library in `~/Documents/Spaces` on first launch. Each new space gets its own memory, notes, chats, artifacts, and work folders. Existing libraries are retained. Install and sign in to Kiro CLI separately.
 
 ## Encryption format
 
 AES-256-GCM with a random 12-byte nonce and a 16-byte authentication tag. Header: ASCII `SPACESENC`, version byte `01`, then the nonce. The complete 22-byte header is authenticated. Ciphertext follows, with the tag at the end. ZIP contents and internal filenames are encrypted; the outer package name and file size remain visible.
 
-## 0.12.5 MCP tool access
+## 0.12.6 MCP access fix
 
-- Each server has **Tools & access**, with a separate policy for each agent.
-- Choose **No access**, **Selected tools**, or **All tools, including new tools**. Search tool names and descriptions, then select individual tools with checkboxes.
-- Selected lists use exact Kiro tool selectors. Newly added tools remain unavailable until selected. No access removes the server from the agent profile.
-- **Add server** offers **Paste JSON** and **CLI**. The MCP connection form is removed; editing a connection uses JSON.
-- Existing Kiro discovery and connection checks remain available. Tool selections apply to the named agent and server across spaces.
+- New installations give all normal agents access to configured servers by default. Use **Tools & access** to restrict an agent.
+- A one-time migration replaces unchanged legacy role alias lists with exact IDs of existing Spaces-configured servers. Exact IDs take priority; ambiguous or missing matches grant no access.
+- Custom lists, inherited Kiro restrictions, and saved per-tool selections are retained. The migration result is recorded in `config.json` under `migrations.mcpExactAccessV1`.
+- UI access counts, initial panel selections, and generated Kiro profiles use the same exact IDs. No runtime alias matching was added.
+- JSON and CLI setup, per-agent tool selection, and Kiro server discovery remain available.
 
-Validation: 118 automated tests, browser checks for independent agent choices and JSON-only setup, a live Kiro check showing that the generated profile exposes only the selected tool, and a packaged Electron MCP check.
+Validation: 123 automated tests, including fresh installations, migration, preserved restrictions, and UI/profile agreement. Windows execution has not been tested.
 
 ## Build for Windows
 
