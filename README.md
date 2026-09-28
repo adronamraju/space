@@ -1,10 +1,10 @@
 # space
 
-Encrypted Spaces 0.12.6 source code and Apple Silicon Mac installer.
+Encrypted Spaces 0.12.7 source code and Apple Silicon Mac installer.
 
 ## Contents
 
-- `encrypted/Spaces-0.12.6-source-and-installer.zip.enc`: AES-256-GCM encrypted package, stored with Git LFS.
+- `encrypted/Spaces-0.12.7-source-and-installer.zip.enc`: AES-256-GCM encrypted package, stored with Git LFS.
 - `encrypted/verification.json`: file size and SHA-256 checksums.
 - `tools/archive-crypto.py`: local encryption and decryption utility.
 
@@ -33,27 +33,27 @@ python3 -m venv .venv
 .venv/bin/python -m pip install cryptography
 .venv/bin/python tools/archive-crypto.py decrypt \
   --key-file /path/to/encryption-key.hex \
-  --input encrypted/Spaces-0.12.6-source-and-installer.zip.enc \
-  --output Spaces-0.12.6-source-and-installer.zip
+  --input encrypted/Spaces-0.12.7-source-and-installer.zip.enc \
+  --output Spaces-0.12.7-source-and-installer.zip
 ```
 
 The utility verifies authentication before making the decrypted ZIP available. It will not overwrite an existing output file. The package cannot be recovered without its key.
 
-Extract the ZIP, then open `spaces-app/dist/Spaces-0.12.6-arm64.dmg` to install Spaces. The app creates its basic library in `~/Documents/Spaces` on first launch. Each new space gets its own memory, notes, chats, artifacts, and work folders. Existing libraries are retained. Install and sign in to Kiro CLI separately.
+Extract the ZIP, then open `spaces-app/dist/Spaces-0.12.7-arm64.dmg` to install Spaces. The app creates its basic library in `~/Documents/Spaces` on first launch. Each new space gets its own memory, notes, chats, artifacts, and work folders. Existing libraries are retained. Install and sign in to Kiro CLI separately.
 
 ## Encryption format
 
 AES-256-GCM with a random 12-byte nonce and a 16-byte authentication tag. Header: ASCII `SPACESENC`, version byte `01`, then the nonce. The complete 22-byte header is authenticated. Ciphertext follows, with the tag at the end. ZIP contents and internal filenames are encrypted; the outer package name and file size remain visible.
 
-## 0.12.6 MCP access fix
+## 0.12.7 Space and work-plan deletion
 
-- New installations give all normal agents access to configured servers by default. Use **Tools & access** to restrict an agent.
-- A one-time migration replaces unchanged legacy role alias lists with exact IDs of existing Spaces-configured servers. Exact IDs take priority; ambiguous or missing matches grant no access.
-- Custom lists, inherited Kiro restrictions, and saved per-tool selections are retained. The migration result is recorded in `config.json` under `migrations.mcpExactAccessV1`.
-- UI access counts, initial panel selections, and generated Kiro profiles use the same exact IDs. No runtime alias matching was added.
-- JSON and CLI setup, per-agent tool selection, and Kiro server discovery remain available.
+- Delete a space from its sidebar menu. The local folder moves to Trash or Recycle Bin after confirmation. Active work prevents deletion.
+- Delete a work plan from its card. Chats and output files stay in place. Unfinished dependent plans are blocked for review.
+- Both agent work-saving tools reuse matching plans. Retry and resume guidance requires reading existing work and keeping its ID. Ambiguous matches require an explicit plan ID.
+- Deleted plan IDs reject stale writes. Deleted plans are retained in private local state; they are not shared or backed up.
+- Existing MCP access controls and the 0.12.6 migration are retained.
 
-Validation: 123 automated tests, including fresh installations, migration, preserved restrictions, and UI/profile agreement. Windows execution has not been tested.
+Validation: 132 automated tests, including MCP retry reuse, dependency cleanup, deletion guards, and preserved output files. Both delete flows were checked in the browser preview. Windows execution has not been tested.
 
 ## Build for Windows
 
