@@ -1,10 +1,10 @@
 # space
 
-Encrypted Spaces 0.12.3 source code and Apple Silicon Mac installer.
+Encrypted Spaces 0.12.4 source code and Apple Silicon Mac installer.
 
 ## Contents
 
-- `encrypted/Spaces-0.12.3-source-and-installer.zip.enc`: AES-256-GCM encrypted package, stored with Git LFS.
+- `encrypted/Spaces-0.12.4-source-and-installer.zip.enc`: AES-256-GCM encrypted package, stored with Git LFS.
 - `encrypted/verification.json`: file size and SHA-256 checksums.
 - `tools/archive-crypto.py`: local encryption and decryption utility.
 
@@ -33,26 +33,27 @@ python3 -m venv .venv
 .venv/bin/python -m pip install cryptography
 .venv/bin/python tools/archive-crypto.py decrypt \
   --key-file /path/to/encryption-key.hex \
-  --input encrypted/Spaces-0.12.3-source-and-installer.zip.enc \
-  --output Spaces-0.12.3-source-and-installer.zip
+  --input encrypted/Spaces-0.12.4-source-and-installer.zip.enc \
+  --output Spaces-0.12.4-source-and-installer.zip
 ```
 
 The utility verifies authentication before making the decrypted ZIP available. It will not overwrite an existing output file. The package cannot be recovered without its key.
 
-Extract the ZIP, then open `spaces-app/dist/Spaces-0.12.3-arm64.dmg` to install Spaces. The app creates its basic library in `~/Documents/Spaces` on first launch. Each new space gets its own memory, notes, chats, artifacts, and work folders. Existing libraries are retained. Install and sign in to Kiro CLI separately.
+Extract the ZIP, then open `spaces-app/dist/Spaces-0.12.4-arm64.dmg` to install Spaces. The app creates its basic library in `~/Documents/Spaces` on first launch. Each new space gets its own memory, notes, chats, artifacts, and work folders. Existing libraries are retained. Install and sign in to Kiro CLI separately.
 
 ## Encryption format
 
 AES-256-GCM with a random 12-byte nonce and a 16-byte authentication tag. Header: ASCII `SPACESENC`, version byte `01`, then the nonce. The complete 22-byte header is authenticated. Ciphertext follows, with the tag at the end. ZIP contents and internal filenames are encrypted; the outer package name and file size remain visible.
 
-## 0.12.3 simpler MCP settings
+## 0.12.4 Kiro MCP discovery and CLI setup
 
-- GitLab and Atlassian appear as default setup cards with prefilled URLs.
-- **Add server** accepts a remote URL, a local command, or complete `mcpServers` JSON.
-- **Save server** applies the server and agent access settings immediately. New servers are available to all agents by default; existing permissions are preserved.
-- Each saved server has **Check connection**, with sign-in and cancellation controls. The check works without creating a space or chat.
-- Detailed configuration is under **Advanced settings**.
+- Spaces automatically reads Kiro's global MCP configuration and the selected space's Kiro MCP configuration.
+- Settings shows configured servers and their source. There are no built-in GitLab or Atlassian cards.
+- **Add server → CLI** runs a `kiro-cli mcp add` command. Form and JSON options register servers through Kiro CLI import.
+- **Edit** saves a Kiro server back to its original scope. Existing Spaces-only entries remain available.
+- Same-name Spaces entries take precedence. Disabled servers remain disabled. Agent access can be restricted.
+- A changed Kiro configuration reloads on the next idle chat connection without creating a new Spaces chat. Active work is retained.
 
-After updating, open Settings, select **Set up** or **Edit**, save the server, then select **Check connection**. Existing idle chats reload the new configuration on the next message. Dependencies and account sign-in must exist on the computer running Spaces.
+After updating, open Settings. Existing Kiro servers should appear. Use **Refresh** after adding a server from another terminal. Registration does not install every runtime dependency; local commands still need their runtime, and services can require account sign-in.
 
-Validation: 105 automated tests, browser checks for preset setup and full JSON import, a live Kiro connection check without a space, and a packaged Electron MCP check. GitLab and Atlassian account sign-in was not tested against live accounts.
+Validation: 114 automated tests, browser inspection of the vendor-neutral settings and CLI input, real Kiro CLI registration followed by discovery and MCP startup in an isolated workspace, and a packaged Electron MCP check. Personal Kiro settings were not changed by these checks.
