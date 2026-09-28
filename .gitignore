@@ -1,0 +1,11 @@
+secrets/
+*.key
+*.hex
+*.pem
+*.zip
+*.dmg
+.env
+.env.*
+__pycache__/
+.venv/
+.DS_Store

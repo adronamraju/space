@@ -1,0 +1,15 @@
+{
+  "archive": "Spaces-0.12.1-source-and-installer.zip.enc",
+  "algorithm": "AES-256-GCM",
+  "bytes": 166118215,
+  "encryptedSha256": "d449a1304fd1c98607bfa0ddbc10108171984893402bad598d656a41ce2b5e58",
+  "decryptedZipSha256": "ba36b12e26b4fb0dd8c6ed353b0a9436b227db166616ad947ddd2aa631b2ae92",
+  "version": "0.12.1",
+  "includes": [
+    "source",
+    "latest Apple Silicon Mac installer",
+    "bundled agents and skills",
+    "library initialization code"
+  ],
+  "personalLibraryIncluded": false
+}
