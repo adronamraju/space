@@ -1,10 +1,10 @@
 # space
 
-Encrypted Spaces 0.12.8 source code and Apple Silicon Mac installer.
+Encrypted Spaces 0.12.9 source code and Apple Silicon Mac installer.
 
 ## Contents
 
-- `encrypted/Spaces-0.12.8-source-and-installer.zip.enc`: AES-256-GCM encrypted package, stored with Git LFS.
+- `encrypted/Spaces-0.12.9-source-and-installer.zip.enc`: AES-256-GCM encrypted package, stored with Git LFS.
 - `encrypted/verification.json`: file size and SHA-256 checksums.
 - `tools/archive-crypto.py`: local encryption and decryption utility.
 
@@ -33,27 +33,27 @@ python3 -m venv .venv
 .venv/bin/python -m pip install cryptography
 .venv/bin/python tools/archive-crypto.py decrypt \
   --key-file /path/to/encryption-key.hex \
-  --input encrypted/Spaces-0.12.8-source-and-installer.zip.enc \
-  --output Spaces-0.12.8-source-and-installer.zip
+  --input encrypted/Spaces-0.12.9-source-and-installer.zip.enc \
+  --output Spaces-0.12.9-source-and-installer.zip
 ```
 
 The utility verifies authentication before making the decrypted ZIP available. It will not overwrite an existing output file. The package cannot be recovered without its key.
 
-Extract the ZIP, then open `spaces-app/dist/Spaces-0.12.8-arm64.dmg` to install Spaces. The app creates its basic library in `~/Documents/Spaces` on first launch. Each new space gets its own memory, notes, chats, artifacts, and work folders. Existing libraries are retained. Install and sign in to Kiro CLI separately.
+Extract the ZIP, then open `spaces-app/dist/Spaces-0.12.9-arm64.dmg` to install Spaces. The app creates its basic library in `~/Documents/Spaces` on first launch. Each new space gets its own memory, notes, chats, artifacts, and work folders. Existing libraries are retained. Install and sign in to Kiro CLI separately.
 
 ## Encryption format
 
 AES-256-GCM with a random 12-byte nonce and a 16-byte authentication tag. Header: ASCII `SPACESENC`, version byte `01`, then the nonce. The complete 22-byte header is authenticated. Ciphertext follows, with the tag at the end. ZIP contents and internal filenames are encrypted; the outer package name and file size remain visible.
 
-## 0.12.8 Tools in existing chats
+## 0.12.9 MCP tool discovery
 
-- Existing chats start a new Kiro session when their effective MCP servers or tool permissions change. Older sessions without a saved configuration hash refresh once.
-- The same local chat retains its visible history, selected model, approval setting, and saved work plans. Unchanged configurations can resume their existing Kiro session.
-- The next message includes saved work state and bounded recent conversation text. Full historical model context and earlier image data are not transferred. Pending context survives restart and failed or cancelled turns.
-- Use **Details → Refresh tools** in a chat to request a fresh Kiro session manually. Active work must finish first. Server startup or sign-in can still be required.
-- Exact per-agent tool grants remain in force. Refresh does not grant additional access.
+- Tools & access shows connection-check errors and available sanitized startup details. Errors are no longer replaced with a generic missing-tool-list message.
+- Kiro's failed-server status is shown as a startup failure. A failed or incomplete check retains saved tools and access selections.
+- Single-server checks run in the selected space's folder using a unique temporary profile. Relative server paths therefore use the same working directory as the chat. With no selected space, use absolute paths.
+- The tool-list wait is now 30 seconds after session creation. Exact server tool metadata can populate the list before a server status snapshot arrives.
+- Existing-chat session renewal from 0.12.8 is retained.
 
-Validation: 138 automated tests. A test using the packaged app with Kiro CLI 2.25.0 added the official Filesystem MCP server after opening a chat. The chat received a new session, and its agent used the external read tool to retrieve a generated test file. The Refresh tools control was checked in the browser preview. Windows execution has not been tested.
+Validation: 143 automated tests. Real Kiro CLI 2.25.0 tests covered a server that failed to start and the official Filesystem MCP server. The packaged app discovered and used the Filesystem tool after it was added to an existing chat. This does not confirm Atlassian credentials, dependencies, or connectivity on another computer. Windows execution has not been tested.
 
 ## Build for Windows
 
