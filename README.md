@@ -1,10 +1,10 @@
 # space
 
-Encrypted Spaces 0.12.10 source code and Apple Silicon Mac installer.
+Encrypted Spaces 0.12.11 source code and Apple Silicon Mac installer.
 
 ## Contents
 
-- `encrypted/Spaces-0.12.10-source-and-installer.zip.enc`: AES-256-GCM encrypted package, stored with Git LFS.
+- `encrypted/Spaces-0.12.11-source-and-installer.zip.enc`: AES-256-GCM encrypted package, stored with Git LFS.
 - `encrypted/verification.json`: file size and SHA-256 checksums.
 - `tools/archive-crypto.py`: local encryption and decryption utility.
 
@@ -33,27 +33,28 @@ python3 -m venv .venv
 .venv/bin/python -m pip install cryptography
 .venv/bin/python tools/archive-crypto.py decrypt \
   --key-file /path/to/encryption-key.hex \
-  --input encrypted/Spaces-0.12.10-source-and-installer.zip.enc \
-  --output Spaces-0.12.10-source-and-installer.zip
+  --input encrypted/Spaces-0.12.11-source-and-installer.zip.enc \
+  --output Spaces-0.12.11-source-and-installer.zip
 ```
 
 The utility verifies authentication before making the decrypted ZIP available. It will not overwrite an existing output file. The package cannot be recovered without its key.
 
-Extract the ZIP, then open `spaces-app/dist/Spaces-0.12.10-arm64.dmg` to install Spaces. The app creates its basic library in `~/Documents/Spaces` on first launch. Each new space gets its own memory, notes, chats, artifacts, and work folders. Existing libraries are retained. Install and sign in to Kiro CLI separately.
+Extract the ZIP, then open `spaces-app/dist/Spaces-0.12.11-arm64.dmg` to install Spaces. The app creates its basic library in `~/Documents/Spaces` on first launch. Each new space gets its own memory, notes, chats, artifacts, and work folders. Existing libraries are retained. Install and sign in to Kiro CLI separately.
 
 ## Encryption format
 
 AES-256-GCM with a random 12-byte nonce and a 16-byte authentication tag. Header: ASCII `SPACESENC`, version byte `01`, then the nonce. The complete 22-byte header is authenticated. Ciphertext follows, with the tag at the end. ZIP contents and internal filenames are encrypted; the outer package name and file size remain visible.
 
-## 0.12.10 Desktop PATH recovery
+## 0.12.11 Computer setup
 
-- On macOS and Linux, read the interactive login shell's PATH once, with a two-second limit. Ignore startup chatter and import only PATH. Cache failures and fall back to common tool locations.
-- Include pyenv, asdf, mise, Cargo, local-bin, and Homebrew locations. Preserve the app's existing PATH priority and per-process environment values.
-- Use the same environment for Kiro lookup, version/sign-in checks, ACP chats, MCP discovery, and MCP installation. Restart Spaces after changing login shell PATH settings.
-- Windows uses its native PATH and does not run a Unix shell.
-- Retain existing exact-ID access defaults, migrations, and custom restrictions. The separate Space guide wildcard change described on the other computer is a local configuration edit, not a universal migration.
+- Check Kiro CLI, sign-in, Node.js, npx, Python 3, uv, and uvx on launch.
+- Show missing or outdated programs, official installation guides, platform-specific steps, and copyable commands in Setup.
+- Check again after installation. Refresh the macOS/Linux shell PATH without restarting. Windows may need a full app restart after PATH changes.
+- Keep saved spaces and files available during setup. Wait to run automatic reports and memory reviews until Kiro is ready.
+- Detect missing MCP launch commands before startup. Refresh saved chat sessions after runtime changes while retaining chat history.
+- Preserve Settings drafts and active turns. Keep setup dismissal local to each computer.
 
-Validation: 149 automated tests. New tests use a minimal desktop PATH, real zsh startup with fixture uvx/npx launchers, Kiro lookup and subprocess checks, fallback behavior, and preservation of custom access. The packaged app was tested with the official Filesystem MCP server using a minimal PATH. Atlassian access on another computer and Windows runtime behavior have not been verified here.
+Validation: 161 automated tests, a local runtime scan, browser layout checks, and first-launch/recheck/continue checks in the packaged Mac app with an isolated library. Windows runtime behavior has not been verified on a Windows computer.
 
 ## Build for Windows
 
